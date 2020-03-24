@@ -10,7 +10,7 @@
           <router-link to='/test2'>例子2</router-link>
         </li>
         <li>
-          <router-link to='/test2'>例子3</router-link>
+          <router-link to='/test3'>例子3</router-link>
         </li>
         <li>
           例子4
