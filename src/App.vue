@@ -13,10 +13,10 @@
           <router-link to='/test3'>例子3</router-link>
         </li>
         <li>
-          例子4
+          <router-link to='/test4'>例子4</router-link>
         </li>
         <li>
-          例子5
+          <!-- 例子5 -->
         </li>
       </ul>
     </p>
