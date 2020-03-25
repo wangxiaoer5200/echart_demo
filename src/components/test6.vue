@@ -30,11 +30,13 @@ export default {
       )
       let rodamData = function() {
         let name = '随机点' + Math.random().toFixed(5) * 100000
-        // let longitude = Math.random() * 62 + 73
+        // 终点经度
         let longitude = 105.18
-        let longitude2 = Math.random() * 360 - 180
-        // let latitude = Math.random() * 50 + 3.52
+        // 终点纬度
         let latitude = 37.51
+        // 起点经度
+        let longitude2 = Math.random() * 360 - 180
+        // 起点纬度
         let latitude2 = Math.random() * 180 - 90
         return {
           coords: [
@@ -47,8 +49,8 @@ export default {
       let option = {
         backgroundColor: '#013954',
         title: {
-          text: '专业运营平台业务',
-          subtext: '数据由专业运营部提供',
+          text: '3D地球攻击线',
+          subtext: '随机模拟数据',
           x: 'center',
           y: 100,
           textStyle: {

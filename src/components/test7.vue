@@ -193,6 +193,16 @@ export default {
         series: dser
       })
       let option = {
+        title: {
+          text: '3D地球攻击线测试',
+          subtext: '模拟数据',
+          x: 'center',
+          y: 100,
+          textStyle: {
+            color: '#fff',
+            fontSize: 25
+          }
+        },
         backgroundColor: 'rgba(0,0,0,0)', //canvas的背景颜色
         globe: {
           baseTexture: myChart,

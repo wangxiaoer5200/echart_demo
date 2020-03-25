@@ -395,8 +395,8 @@ export default {
 
       let option = {
         title: {
-          text: '备品物流平台',
-          subtext: '数据由备品物流部提供',
+          text: '中国物流测试',
+          subtext: '模拟数据',
           x: 'center',
           y: 100,
           textStyle: {

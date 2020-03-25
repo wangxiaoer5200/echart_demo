@@ -269,6 +269,16 @@ export default {
       }
       console.log(convertData(data))
       let option = {
+        title: {
+          text: '中国地图测试',
+          subtext: '模拟数据',
+          x: 'center',
+          y: 100,
+          textStyle: {
+            color: '#fff',
+            fontSize: 25
+          }
+        },
         tooltip: {},
         visualMap: {
           min: 0,

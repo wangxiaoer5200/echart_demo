@@ -573,8 +573,8 @@ export default {
       let option = {
         backgroundColor: '#013954',
         title: {
-          text: '专业运营平台业务',
-          subtext: '数据由专业运营部提供',
+          text: '中国地图测试',
+          subtext: '模拟的数据',
           x: 'center',
           y: 100,
           textStyle: {
