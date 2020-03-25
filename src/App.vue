@@ -24,6 +24,9 @@
         <li>
           <router-link to='/test7'>例子7</router-link>
         </li>
+        <li>
+          <router-link to='/test8'>例子8</router-link>
+        </li>
       </ul>
     </p>
     <router-view style="display:flex;justify-content: center;;" />
