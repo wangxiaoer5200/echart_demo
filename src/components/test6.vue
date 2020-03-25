@@ -25,9 +25,11 @@ export default {
   methods: {
     // 绘制图表
     initData() {
+      //初始化canvas节点
       let myChart = this.$echarts.init(
         document.getElementById('chart_example6')
       )
+      //随机获取点点坐标函数
       let rodamData = function() {
         let name = '随机点' + Math.random().toFixed(5) * 100000
         // 终点经度
@@ -46,6 +48,47 @@ export default {
           value: (Math.random() * 3000).toFixed(2)
         }
       }
+      // 使用世界地图生成地球皮肤
+      let canvas = document.createElement('canvas')
+      let myChart2 = this.$echarts.init(canvas, null, {
+        width: 4096,
+        height: 2048
+      })
+      myChart2.setOption({
+        backgroundColor: 'rgba(3,28,72,0.3)',
+        title: {
+          show: true
+        },
+        geo: {
+          type: 'map',
+          map: 'world',
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          boundingCoords: [
+            [-180, 90],
+            [180, -90]
+          ],
+          zoom: 0,
+          roam: false,
+          itemStyle: {
+            borderColor: '#000d2d',
+            normal: {
+              areaColor: '#2455ad',
+              borderColor: '#000c2d'
+            },
+            emphasis: {
+              areaColor: '#357cf8'
+            }
+          },
+          label: {
+            fontSize: 24
+          }
+        },
+        series: []
+      })
+      //echarts配置
       let option = {
         backgroundColor: '#013954',
         title: {
@@ -72,7 +115,7 @@ export default {
           selectedMode: 'single'
         },
         globe: {
-          baseTexture: myChart,
+          baseTexture: myChart2,
           environment: this.$echarts.graphic.LinearGradient(
             0,
             1,
@@ -135,11 +178,11 @@ export default {
           }
         ]
       }
-      // 随机数据
-      for (let i = 0; i < 500; i++) {
+      // 随机数据 i控制线数量
+      for (let i = 0; i < 200; i++) {
         option.series[0].data = option.series[0].data.concat(rodamData())
       }
-
+      //画图
       myChart.setOption(option)
       window.addEventListener('resize', function() {
         myChart.resize()
