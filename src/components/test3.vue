@@ -12,6 +12,7 @@
 <script>
 import $ from 'jquery'
 import world from 'echarts/map/js/world.js'
+import china from 'echarts/map/js/china.js'
 
 export default {
   data() {

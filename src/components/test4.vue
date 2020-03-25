@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import china from 'echarts/map/js/china.js'
 export default {
   data() {
     return {}

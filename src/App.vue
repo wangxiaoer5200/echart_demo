@@ -16,7 +16,7 @@
           <router-link to='/test4'>例子4</router-link>
         </li>
         <li>
-          <!-- 例子5 -->
+          <router-link to='/test5'>例子5</router-link>
         </li>
       </ul>
     </p>
