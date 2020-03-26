@@ -30,6 +30,9 @@
         <li>
           <router-link to='/test9'>例子9</router-link>
         </li>
+        <li>
+          <router-link to='/test10'>例子10</router-link>
+        </li>
       </ul>
     </p>
     <router-view style="display:flex;justify-content: center;;" />
