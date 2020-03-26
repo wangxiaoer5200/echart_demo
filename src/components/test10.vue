@@ -4,7 +4,7 @@
   <div>
     <div
       class="earthmap"
-      id="chart_example7"
+      id="chart_example10"
       style="width:1500px;height:1221px;"
     >
     </div>
@@ -427,9 +427,9 @@ export default {
         ]
       }
 
-      this.$echarts.dispose(document.getElementById('chart_example7'))
+      this.$echarts.dispose(document.getElementById('chart_example10'))
       let myChart = this.$echarts.init(
-        document.getElementById('chart_example7')
+        document.getElementById('chart_example10')
       )
       myChart.setOption(option)
 
@@ -455,9 +455,9 @@ export default {
 
     // 绘制图表
     initData() {
-      let myChart = this.$echarts.init(
-        document.getElementById('chart_example7')
-      )
+      // let myChart = this.$echarts.init(
+      //   document.getElementById('chart_example10')
+      // )
 
       myChart.setOption(option)
       window.addEventListener('resize', function() {
