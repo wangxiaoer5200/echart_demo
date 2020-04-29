@@ -33,6 +33,15 @@
         <li>
           <router-link to='/test10'>例子10</router-link>
         </li>
+        <li>
+          <router-link to='/test11'>例子11</router-link>
+        </li>
+        <li>
+          <router-link to='/test12'>例子12</router-link>
+        </li>
+        <li>
+          <router-link to='/test13'>例子13</router-link>
+        </li>
       </ul>
     </p>
     <router-view style="display:flex;justify-content: center;;" />

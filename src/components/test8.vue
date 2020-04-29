@@ -3,6 +3,7 @@
   <div>
     <div
       class="earthmap"
+      ref='example8'
       id="chart_example8"
       style="width:1500px;height:1221px;"
     >
@@ -26,9 +27,7 @@ export default {
     // 绘制图表
     initData() {
       //初始化canvas节点
-      let myChart = this.$echarts.init(
-        document.getElementById('chart_example8')
-      )
+      let myChart = this.$echarts.init(this.$refs.example8)
       let geoCoordMap = {
         Peking: [116, 40],
         Paris: [2, 49],

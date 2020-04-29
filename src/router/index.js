@@ -11,6 +11,9 @@ import test7 from '@/components/test7.vue'
 import test8 from '@/components/test8.vue'
 import test9 from '@/components/test9.vue'
 import test10 from '@/components/test10.vue'
+import test11 from '@/components/test11.vue'
+import test12 from '@/components/test12.vue'
+import test13 from '@/components/test13.vue'
 
 Vue.use(Router)
 
@@ -70,6 +73,21 @@ export default new Router({
       path: '/test10',
       name: 'test10',
       component: test10
+    },
+    {
+      path: '/test11',
+      name: 'test11',
+      component: test11
+    },
+     {
+      path: '/test12',
+      name: 'test12',
+      component: test12
+    },
+    {
+      path: '/test13',
+      name: 'test13',
+      component: test13
     }
   ]
 })
