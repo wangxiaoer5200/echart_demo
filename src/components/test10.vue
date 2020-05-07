@@ -255,6 +255,7 @@ export default {
             })
           }
         }
+        console.log(res)
         return res
       }
 
@@ -370,7 +371,7 @@ export default {
             label: {
               normal: {
                 formatter: '{b}',
-                position: 'right',
+                position: 'left',
                 show: false
               },
               emphasis: {
