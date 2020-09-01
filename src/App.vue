@@ -1,3 +1,11 @@
+<!--
+ * @Description: 文件说明
+ * @Author: wangbin
+ * @Date: 2020-03-24 16:08:32
+ * @LastEditTime: 2020-07-31 18:22:42
+ * @LastEditors: wangbin
+ * @FilePath: \echarts_study\src\App.vue
+-->
 <template>
   <div id="app">
     <p>
@@ -41,6 +49,12 @@
         </li>
         <li>
           <router-link to='/test13'>例子13</router-link>
+        </li>
+           <li>
+          <router-link to='/test14'>例子14</router-link>
+        </li>
+ <li>
+          <router-link to='/test15'>例子15</router-link>
         </li>
       </ul>
     </p>

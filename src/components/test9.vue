@@ -1,3 +1,11 @@
+<!--
+ * @Description: 文件说明
+ * @Author: wangbin
+ * @Date: 2020-03-25 15:32:13
+ * @LastEditTime: 2020-07-31 17:43:04
+ * @LastEditors: wangbin
+ * @FilePath: \echarts_study\src\components\test9.vue
+-->
 <template>
   <!-- 例子9  饼图-->
   <div>

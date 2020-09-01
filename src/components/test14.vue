@@ -1,242 +1,485 @@
-<template>
-  <div
-    ref='test14'
-    style="height:500px;"
-  >
+<!--
+ * @description:福建省下钻地图
+ * @author: bin.wang
+ * @Date: 2020-04-24 16:28:45
+ * @LastEditors: wangbin
+ * @LastEditTime: 2020-07-31 18:20:17
+ * @email: 18695686631@163.com
+ -->
 
-  </div>
+<template>
+  <div id="fjMap" ref="fjMap" class="fj-map"> </div>
 </template>
 
 <script>
-import world from 'echarts/map/js/world.js'
+import { cityMap, quyMap } from './map.js';
+import echarts from 'echarts';
+import 'echarts/map/js/province/fujian';
+import 'echarts-gl';
+import fujian from './map/map/fujian.json';
 export default {
   components: {},
   data() {
-    return {}
+    return {
+      chart: '',
+    };
   },
   mounted() {
-    this.initData()
+    this.chart = echarts.init(this.$refs.fjMap);
+    this.registerMap();
   },
   methods: {
-    initData() {
-      var myChart = echarts.init(document.getElementById('main'))
-      echarts.registerMap('tongren', geoJson)
+    async registerMap() {
+      echarts.extendsMap = function (id, opt) {
+        // 实例
+        let chart = this.init(document.getElementById(id));
+        // 配置散点
+        let geoCoordMap = {
+          三明市: [117.642193934, 26.2708352794],
+          南平市: [118.181882949, 26.6436264742],
+          厦门市: [118.103886046, 24.4892306125],
+          宁德市: [119.54208215, 26.6565274192],
+          泉州市: [118.600362343, 24.901652384],
+          漳州市: [117.676204679, 24.5170647798],
+          福州市: [119.330221107, 26.0471254966],
+          莆田市: [119.077730964, 25.4484501367],
+          龙岩市: [117.017996739, 25.0786854335]
+        };
+        // 配置散点颜色
+        let levelColorMap = {
+          '1': 'rgba(241, 109, 115, .8)',
+          '2': 'rgba(255, 235, 59, .7)',
+          '3': 'rgba(41,237,190, .6)'
+        };
+        // 层级索引
+        let name = [opt.mapName];
+        let idx = 0;
+        // 标题位置参数
+        let pos = {
+          leftPlus: 0,
+          leftCur: 55,
+          left: -2,
+          top: 100
+        };
+        let line = [
+          [0, 0],
+          [8, 11],
+          [0, 22]
+        ];
+        // style
+        let style = {
+          font: '18px "Microsoft YaHei", sans-serif',
+          textColor: '#eee',
+          lineColor: 'rgba(147, 235, 248, .8)'
+        };
+        let handleEvents = {
+          /**
+           * i 实例对象
+           * o option
+           * n 地图名
+           **/
+          resetOption: function (i, o, n, t) {
+            let breadcrumb = this.createBreadcrumb(n, t);
 
-      // 隐藏动画加载效果。
-      myChart.hideLoading()
-
-      // 图表配置项
-      var option = {
-        title: {
-          // 标题
-          top: '5%',
-          text: '铜仁市3D地图',
-          subtext: '',
-          x: 'center',
-          textStyle: {
-            color: '#ccc'
-          }
-        },
-
-        tooltip: {
-          // 提示框
-          trigger: 'item',
-          formatter: function(params) {
-            return params.name
-          }
-        },
-
-        series: [
-          {
-            type: 'map3D', // 系列类型
-            name: 'map3D', // 系列名称
-            map: 'tongren', // 地图类型。echarts-gl 中使用的地图类型同 geo 组件相同(ECharts 中提供了两种格式的地图数据，一种是可以直接 script 标签引入的 js 文件，引入后会自动注册地图名字和数据。还有一种是 JSON 文件，需要通过 AJAX 异步加载后手动注册。)
-
-            // 环境贴图，支持純颜色值，渐变色，全景贴图的 url。默认为 'auto'，在配置有 light.ambientCubemap.texture 的时候会使用该纹理作为环境贴图。否则则不显示环境贴图。
-            environment: new echarts.graphic.LinearGradient(
-              0,
-              0,
-              0,
-              1,
-              [
-                {
-                  // 配置为垂直渐变的背景
-                  offset: 0,
-                  color: '#00aaff' // 天空颜色
-                },
-                {
-                  offset: 0.7,
-                  color: '#998866' // 地面颜色
-                },
-                {
-                  offset: 1,
-                  color: '#998866' // 地面颜色
+            let j = name.indexOf(n);
+            let l = o.graphic.length;
+            if (j < 0) {
+              o.graphic.push(breadcrumb);
+              o.graphic[0].children[0].shape.x2 = 145;
+              o.graphic[0].children[1].shape.x2 = 145;
+              if (o.graphic.length > 2) {
+                for (let x = 0; x < opt.data.length; x++) {
+                  if (n === opt.data[x].name + '市') {
+                    o.series[0].data = handleEvents.initSeriesData([
+                      opt.data[x]
+                    ]);
+                    break;
+                  } else o.series[0].data = [];
                 }
-              ],
-              false
-            ),
-
-            label: {
-              // 标签的相关设置
-              show: true, // (地图上的城市名称)是否显示标签 [ default: false ]
-              //distance: 50, // 标签距离图形的距离，在三维的散点图中这个距离是屏幕空间的像素值，其它图中这个距离是相对的三维距离
-              //formatter:, // 标签内容格式器
-              textStyle: {
-                // 标签的字体样式
-                color: '#000', // 地图初始化区域字体颜色
-                fontSize: 8, // 字体大小
-                opacity: 1, // 字体透明度
-                backgroundColor: 'rgba(0,23,11,0)' // 字体背景色
               }
-            },
+              name.push(n);
+              idx++;
+            } else {
+              o.graphic.splice(j + 2, l);
+              if (o.graphic.length <= 2) {
+                o.graphic[0].children[0].shape.x2 = 60;
+                o.graphic[0].children[1].shape.x2 = 60;
+                o.series[0].data = handleEvents.initSeriesData(opt.data);
+              }
+              name.splice(j + 1, l);
+              idx = j;
+              pos.leftCur -= pos.leftPlus * (l - j - 1);
+            }
 
-            itemStyle: {
-              // 三维地理坐标系组件 中三维图形的视觉属性，包括颜色，透明度，描边等。
-              color: 'rgba(95,158,160,0.5)', // 地图板块的颜色
-              opacity: 1, // 图形的不透明度 [ default: 1 ]
-              borderWidth: 0.5, // (地图板块间的分隔线)图形描边的宽度。加上描边后可以更清晰的区分每个区域 [ default: 0 ]
-              borderColor: '#000' // 图形描边的颜色。[ default: #333 ]
-            },
+            o.geo.map = n;
+            o.geo.zoom = 0.4;
+            i.clear();
+            i.setOption(o);
+            this.zoomAnimation();
+            opt.callback(n, o, i);
+          },
 
-            emphasis: {
-              // 鼠标 hover 高亮时图形和标签的样式 (当鼠标放上去时 label和itemStyle 的样式)
-              label: {
-                // label高亮时的配置
+          /**
+           * name 地图名
+           **/
+          createBreadcrumb: function (name, t) {
+            if (t) {
+              return {
+                type: 'group',
+                id: name,
+                left: pos.leftCur + pos.leftPlus,
+                top: pos.top + 3,
+                children: []
+              };
+            } else {
+              let cityToPinyin = {
+                福州市: 'fuzhou',
+                厦门市: 'xiamen',
+                泉州市: 'quanzhou',
+                漳州市: 'zhangzhou',
+                莆田市: 'putian',
+                龙岩市: 'longyan',
+                三明市: 'sanming',
+                南平市: 'nanping',
+                宁德市: 'ningde'
+              };
+              let breadcrumb = {
+                type: 'group',
+                id: name,
+                left: pos.leftCur + pos.leftPlus,
+                top: pos.top + 3,
+                children: [
+                  {
+                    type: 'polyline',
+                    left: -90,
+                    top: -5,
+                    shape: {
+                      points: line
+                    },
+                    style: {
+                      stroke: '#fff',
+                      key: name
+                      // lineWidth: 2,
+                    },
+                    onclick: function () {
+                      let name = this.style.key;
+                      handleEvents.resetOption(chart, option, name);
+                    }
+                  },
+                  {
+                    type: 'text',
+                    left: -68,
+                    top: 'middle',
+                    style: {
+                      text: name,
+                      textAlign: 'center',
+                      fill: style.textColor,
+                      font: style.font
+                    },
+                    onclick: function () {
+                      let name = this.style.text;
+                      handleEvents.resetOption(chart, option, name);
+                    }
+                  },
+                  {
+                    type: 'text',
+                    left: -68,
+                    top: 10,
+                    style: {
+                      name: name,
+                      text: cityToPinyin[name]
+                        ? cityToPinyin[name].toUpperCase()
+                        : '',
+                      textAlign: 'center',
+                      fill: style.textColor,
+                      font: '12px "Microsoft YaHei", sans-serif'
+                    },
+                    onclick: function () {
+                      // console.log(this.style);
+                      let name = this.style.name;
+                      handleEvents.resetOption(chart, option, name);
+                    }
+                  }
+                ]
+              };
+
+              pos.leftCur += pos.leftPlus;
+
+              return breadcrumb;
+            }
+          },
+
+          // 设置effectscatter 散点配置
+          initSeriesData: function (data) {
+            let temp = [];
+            for (let i = 0; i < data.length; i++) {
+              let geoCoord = geoCoordMap[data[i].name];
+              if (geoCoord) {
+                temp.push({
+                  name: data[i].name,
+                  value: geoCoord.concat(data[i].value, data[i].level)
+                });
+              }
+            }
+            return temp;
+          },
+
+          //  层级
+          zoomAnimation: function () {
+            let count = null;
+            let zoom = function (per) {
+              if (!count) count = per;
+              count = count + per;
+              // console.log(per,count);
+              chart.setOption({
+                geo: {
+                  zoom: count
+                }
+              });
+              if (count < 1) {
+                window.requestAnimationFrame(function () {
+                  zoom(0.2);
+                });
+              }
+            };
+            window.requestAnimationFrame(function () {
+              zoom(0.2);
+            });
+          }
+        };
+        let option = {
+          // backgroundColor: opt.bgColor,
+          graphic: [
+            {
+              type: 'group',
+              left: pos.left,
+              top: pos.top - 4,
+              children: [
+                {
+                  type: 'line',
+                  left: 0,
+                  top: -20,
+                  shape: {
+                    x1: 0,
+                    y1: 0,
+                    x2: 60,
+                    y2: 0
+                  },
+                  style: {
+                    stroke: style.lineColor
+                  }
+                },
+                {
+                  type: 'line',
+                  left: 0,
+                  top: 20,
+                  shape: {
+                    x1: 0,
+                    y1: 0,
+                    x2: 60,
+                    y2: 0
+                  },
+                  style: {
+                    stroke: style.lineColor
+                  }
+                }
+              ]
+            },
+            {
+              id: name[idx],
+              type: 'group',
+              left: pos.left + 2,
+              top: pos.top,
+              children: [
+                {
+                  type: 'polyline',
+                  left: 90,
+                  top: -12,
+                  shape: {
+                    points: line
+                  },
+                  style: {
+                    stroke: 'transparent',
+                    key: name[0]
+                  },
+                  onclick: function () {
+                    let name = this.style.key;
+                    handleEvents.resetOption(chart, option, name);
+                  }
+                },
+                {
+                  type: 'text',
+                  left: 0,
+                  top: 'middle',
+                  style: {
+                    text: name[0] === '福建' ? '福建省' : name[0],
+                    textAlign: 'center',
+                    fill: style.textColor,
+                    font: style.font
+                  },
+                  onclick: function () {
+                    handleEvents.resetOption(chart, option, '福建');
+                  }
+                },
+                {
+                  type: 'text',
+                  left: 6,
+                  top: 10,
+                  style: {
+                    text: 'FUJIAN',
+                    textAlign: 'center',
+                    fill: style.textColor,
+                    font: '12px "Microsoft YaHei", sans-serif'
+                  },
+                  onclick: function () {
+                    handleEvents.resetOption(chart, option, '福建');
+                  }
+                }
+              ]
+            }
+          ],
+          geo: {
+            map: opt.mapName,
+            // roam: true,
+            zoom: 1,
+            label: {
+              normal: {
                 show: true,
                 textStyle: {
-                  color: '#fff', // 高亮时标签颜色变为 白色
-                  fontSize: 15 // 高亮时标签字体 变大
+                  color: '#fff'
                 }
               },
+              emphasis: {
+                textStyle: {
+                  color: '#fff'
+                }
+              }
+            },
+            itemStyle: {
+              normal: {
+                borderColor: 'rgba(147, 235, 248, 1)',
+                borderWidth: 1,
+                areaColor: {
+                  type: 'radial',
+                  x: 0.5,
+                  y: 0.5,
+                  r: 0.8,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: 'rgba(147, 235, 248, 0)' // 0% 处的颜色
+                    },
+                    {
+                      offset: 1,
+                      color: 'rgba(147, 235, 248, .2)' // 100% 处的颜色
+                    }
+                  ],
+                  globalCoord: false // 缺省为 false
+                },
+                shadowColor: 'rgba(128, 217, 248, 1)',
+                // shadowColor: 'rgba(255, 255, 255, 1)',
+                shadowOffsetX: -2,
+                shadowOffsetY: 2,
+                shadowBlur: 10
+              },
+              emphasis: {
+                areaColor: '#389BB7',
+                borderWidth: 0
+              }
+            },
+            regions: []
+          },
+          series: [
+            {
+              type: 'effectScatter',
+              coordinateSystem: 'geo',
+              // symbol: 'diamond',
+              showEffectOn: 'render',
+              rippleEffect: {
+                period: 10,
+                scale: 6,
+                brushType: 'fill'
+              },
+              hoverAnimation: true,
               itemStyle: {
-                // itemStyle高亮时的配置
-                areaColor: '#66ffff' // 高亮时地图板块颜色改变
-              }
-            },
-
-            groundPlane: {
-              // 地面可以让整个组件有个“摆放”的地方，从而使整个场景看起来更真实，更有模型感。
-              show: false, // 是否显示地面。[ default: false ]
-              color: '#aaa' // 地面颜色。[ default: '#aaa' ]
-            },
-
-            regions: [
-              {
-                // 可对单个地图区域进行设置
-                name: '玉屏侗族自治县', // 所对应的地图区域的名称
-                //regionHeight: '', // 区域的高度，可以设置不同的高度用来表达数据的大小。当 GeoJSON 为建筑的数据时，也可以通过这个值表示简直的高度。
-                itemStyle: {
-                  // 单个区域的样式设置
-                  color: '#00FF00',
-                  opacity: 1,
-                  borderWidth: 0.4,
-                  borderColor: '#5F9EA0'
+                normal: {
+                  color: function (params) {
+                    return levelColorMap[params.value[3]];
+                  },
+                  shadowBlur: 20,
+                  shadowColor: '#333'
                 }
               },
-              {
-                name: '碧江区',
-                itemStyle: {
-                  color: '#EEEE00',
-                  opacity: 1,
-                  borderWidth: 0.4,
-                  borderColor: '#5F9EA0'
-                }
-              }
-            ],
+              data: handleEvents.initSeriesData(opt.data)
+            }
+          ]
+        };
+        // console.log(chart);
+        chart.setOption(option);
+        // 添加事件 点击穿透
+        chart.on('click', function (params) {
+          let _self = this;
+          if (opt.goDown && params.name !== name[idx]) {
+            if (cityMap[params.name]) {
+              let url = cityMap[params.name];
+              echarts.registerMap(params.name, url);
+              handleEvents.resetOption(_self, option, params.name);
+            }
+            if (quyMap[params.name]) {
+              let url = quyMap[params.name];
+              echarts.registerMap(params.name, url);
+              handleEvents.resetOption(_self, option, params.name, true);
+            }
+          }
+        });
+         //  增加外部可以调用的方法
+        chart.setMap = function (mapName) {
+          if (cityMap[mapName]) {
+            let _self = this;
+            let url = cityMap[mapName];
+            echarts.registerMap(mapName, url);
+            handleEvents.resetOption(_self, option, mapName);
+          }
+        };
+        return chart;
+      };
 
-            //shading: 'lambert', // 三维地理坐标系组件中三维图形的着色效果，echarts-gl 中支持下面三种着色方式:
-            // 'color' 只显示颜色，不受光照等其它因素的影响。
-            // 'lambert' 通过经典的 lambert 着色表现光照带来的明暗。
-            // 'realistic' 真实感渲染，配合 light.ambientCubemap 和 postEffect 使用可以让展示的画面效果和质感有质的提升。ECharts GL 中使用了基于物理的渲染（PBR） 来表现真实感材质。
-            // realisticMaterial: {} // 真实感材质相关的配置项，在 shading 为'realistic'时有效。
-            // lambertMaterial: {} // lambert 材质相关的配置项，在 shading 为'lambert'时有效。
-            // colorMaterial: {} // color 材质相关的配置项，在 shading 为'color'时有效。
-
-            light: {
-              // 光照相关的设置。在 shading 为 'color' 的时候无效。 光照的设置会影响到组件以及组件所在坐标系上的所有图表。合理的光照设置能够让整个场景的明暗变得更丰富，更有层次。
-              main: {
-                // 场景主光源的设置，在 globe 组件中就是太阳光。
-                color: '#fff', //主光源的颜色。[ default: #fff ]
-                intensity: 1.2, //主光源的强度。[ default: 1 ]
-                shadow: false, //主光源是否投射阴影。默认关闭。 开启阴影可以给场景带来更真实和有层次的光照效果。但是同时也会增加程序的运行开销。
-                //shadowQuality: 'high', // 阴影的质量。可选'low', 'medium', 'high', 'ultra' [ default: 'medium' ]
-                alpha: 55, // 主光源绕 x 轴，即上下旋转的角度。配合 beta 控制光源的方向。[ default: 40 ]
-                beta: 10 // 主光源绕 y 轴，即左右旋转的角度。[ default: 40 ]
-              },
-              ambient: {
-                // 全局的环境光设置。
-                color: '#fff', // 环境光的颜色。[ default: #fff ]
-                intensity: 0.5 // 环境光的强度。[ default: 0.2 ]
-              }
-            },
-
-            viewControl: {
-              // 用于鼠标的旋转，缩放等视角控制。
-              projection: 'perspective', // 投影方式，默认为透视投影'perspective'，也支持设置为正交投影'orthographic'。
-              autoRotate: false, // 是否开启视角绕物体的自动旋转查看。[ default: false ]
-              autoRotateDirection: 'cw', // 物体自传的方向。默认是 'cw' 也就是从上往下看是顺时针方向，也可以取 'ccw'，既从上往下看为逆时针方向。
-              autoRotateSpeed: 10, // 物体自传的速度。单位为角度 / 秒，默认为10 ，也就是36秒转一圈。
-              autoRotateAfterStill: 3, // 在鼠标静止操作后恢复自动旋转的时间间隔。在开启 autoRotate 后有效。[ default: 3 ]
-              damping: 0, // 鼠标进行旋转，缩放等操作时的迟滞因子，在大于等于 1 的时候鼠标在停止操作后，视角仍会因为一定的惯性继续运动（旋转和缩放）。[ default: 0.8 ]
-              rotateSensitivity: 1, // 旋转操作的灵敏度，值越大越灵敏。支持使用数组分别设置横向和纵向的旋转灵敏度。默认为1, 设置为0后无法旋转。 rotateSensitivity: [1, 0]——只能横向旋转； rotateSensitivity: [0, 1]——只能纵向旋转。
-              zoomSensitivity: 1, // 缩放操作的灵敏度，值越大越灵敏。默认为1,设置为0后无法缩放。
-              panSensitivity: 1, // 平移操作的灵敏度，值越大越灵敏。默认为1,设置为0后无法平移。支持使用数组分别设置横向和纵向的平移灵敏度
-              panMouseButton: 'left', // 平移操作使用的鼠标按键，支持：'left' 鼠标左键（默认）;'middle' 鼠标中键 ;'right' 鼠标右键(注意：如果设置为鼠标右键则会阻止默认的右键菜单。)
-              rotateMouseButton: 'left', // 旋转操作使用的鼠标按键，支持：'left' 鼠标左键;'middle' 鼠标中键（默认）;'right' 鼠标右键(注意：如果设置为鼠标右键则会阻止默认的右键菜单。)
-
-              distance: 200, // [ default: 100 ] 默认视角距离主体的距离，对于 grid3D 和 geo3D 等其它组件来说是距离中心原点的距离,对于 globe 来说是距离地球表面的距离。在 projection 为'perspective'的时候有效。
-              minDistance: 40, // [ default: 40 ] 视角通过鼠标控制能拉近到主体的最小距离。在 projection 为'perspective'的时候有效。
-              maxDistance: 400, // [ default: 400 ] 视角通过鼠标控制能拉远到主体的最大距离。在 projection 为'perspective'的时候有效。
-
-              alpha: 40, // 视角绕 x 轴，即上下旋转的角度。配合 beta 可以控制视角的方向。[ default: 40 ]
-              beta: 15, // 视角绕 y 轴，即左右旋转的角度。[ default: 0 ]
-              minAlpha: -360, // 上下旋转的最小 alpha 值。即视角能旋转到达最上面的角度。[ default: 5 ]
-              maxAlpha: 360, // 上下旋转的最大 alpha 值。即视角能旋转到达最下面的角度。[ default: 90 ]
-              minBeta: -360, // 左右旋转的最小 beta 值。即视角能旋转到达最左的角度。[ default: -80 ]
-              maxBeta: 360, // 左右旋转的最大 beta 值。即视角能旋转到达最右的角度。[ default: 80 ]
-
-              center: [0, 0, 0], // 视角中心点，旋转也会围绕这个中心点旋转，默认为[0,0,0]。
-
-              animation: true, // 是否开启动画。[ default: true ]
-              animationDurationUpdate: 1000, // 过渡动画的时长。[ default: 1000 ]
-              animationEasingUpdate: 'cubicInOut' // 过渡动画的缓动效果。[ default: cubicInOut ]
-            },
-
-            data: [
-              {
-                // 可对单个地图区域进行设置
-                name: '玉屏侗族自治县', // 所对应的地图区域的名称
-                //regionHeight: '', // 区域的高度，可以设置不同的高度用来表达数据的大小。当 GeoJSON 为建筑的数据时，也可以通过这个值表示简直的高度。
-                itemStyle: {
-                  // 单个区域的样式设置
-                  color: '#00FF00',
-                  opacity: 1,
-                  borderWidth: 0.4,
-                  borderColor: '#5F9EA0'
-                }
-              },
-              {
-                name: '碧江区',
-                itemStyle: {
-                  color: '#EEEE00',
-                  opacity: 1,
-                  borderWidth: 0.4,
-                  borderColor: '#5F9EA0'
-                }
-              }
-            ]
+      const cityData = fujian
+      if (cityData) {
+        // 绘制地图
+        echarts.registerMap('fujian', cityData);
+        // 注册地图
+      }
+      let _that = this;
+      echarts.extendsMap('fjMap', {
+        mapName: '福建', // 地图名
+        goDown: true, // 是否下钻
+        // 下钻回调
+        callback: function (name, option, instance) {
+          _that.$emit('mapClick', name);
+        },
+        // 数据展示
+        data: [
+          {
+            name: '福州市',
+            value: 20,
+            level: 3
+          },
+          {
+            name: '三明市',
+            value: 16,
+            level: 3
           }
         ]
-      }
-
-      // 设置图表实例的配置项以及数据，万能接口，所有参数和数据的修改都可以通过setOption完成，ECharts 会合并新的参数和数据，然后刷新图表。
-      myChart.setOption(option)
-
-      // 显示加载动画效果,可以在加载数据前手动调用该接口显示加载动画，在数据加载完成后调用 hideLoading 隐藏加载动画。
-      myChart.showLoading()
-    }
-  },
-  watch: {},
-  created() {}
-}
+      });
+    },
+  }
+};
 </script>
+<style scoped>
+.fj-map{
+  padding: 20px;
+  height: 500px;
+  background: rgba(1, 39, 78, 0.75);
+}
+</style>

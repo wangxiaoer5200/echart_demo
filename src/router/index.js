@@ -14,6 +14,8 @@ import test10 from '@/components/test10.vue'
 import test11 from '@/components/test11.vue'
 import test12 from '@/components/test12.vue'
 import test13 from '@/components/test13.vue'
+import test14 from '@/components/test14.vue'
+import test15 from '@/components/test15.vue'
 
 Vue.use(Router)
 
@@ -88,6 +90,16 @@ export default new Router({
       path: '/test13',
       name: 'test13',
       component: test13
+    },
+    {
+      path: '/test14',
+      name: 'test14',
+      component: test14
+    },
+     {
+      path: '/test15',
+      name: 'test15',
+      component: test15
     }
   ]
 })
